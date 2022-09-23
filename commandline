@@ -1,0 +1,7 @@
+#commandline for diploscapter genome assembly
+#first copied the fasta file into home/isabella/Data
+#within home/isabella/Data
+#using hifiasm as the genome assembler
+
+nohup /NVME/Software/hifiasm/hifiasm -o m5427Ue_assembly.asm -t 20 -l 2 m54274Ue_220811_201236.hifi_reads.fastq.gz &
+more nohup.out #shows us what is being produced in the output.
