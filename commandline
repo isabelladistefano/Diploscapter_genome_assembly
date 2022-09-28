@@ -22,3 +22,5 @@ awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.r_utg.noseq.gfa > m542
 
 #when back in own directory, to download files from Motoko:
 scp isabella@bast-work-1.zoologie.uni-koeln.de:/home/isabella/Data/m5427Ue_assembly.asm.bp.p_utg.noseq.fasta .
+# the dot signifies the direcroty you are in
+# pwd shows where you are right now.
