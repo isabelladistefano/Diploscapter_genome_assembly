@@ -24,3 +24,10 @@ awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.r_utg.noseq.gfa > m542
 scp isabella@bast-work-1.zoologie.uni-koeln.de:/home/isabella/Data/m5427Ue_assembly.asm.bp.p_utg.noseq.fasta .
 # the dot signifies the direcroty you are in
 # pwd shows where you are right now.
+# to run a programme, must first download the tool into the Software folder (or whatever folder you will use it from) without using conda - command on github.
+# then need to specify it's path, not just to it's folder, but to it's absolute path.
+# in Motoko, the asbsolute path is leading to the tool itself which is in green.
+# made a directory for the Flye results to go into - not sure if it's necessary in isabella/Data: 
+mkdir flye_assembly_diploscapter 
+nohup /NVME/Software/Flye/bin/flye -t 20 --pacbio-hifi m54274Ue_220811_201236.hifi_reads.fastq.gz --out-dir ./flye_assembly_diploscapter &
+# got the 
