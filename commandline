@@ -39,4 +39,7 @@ git clone https://github.com/ruanjue/wtdbg2
 cd wtdbg2 && make
 nohup /NVME/Software/wtdbg2/wtdbg2 -t 20 -x ccs -i m54274Ue_220811_201236.hifi_reads.fastq.gz -o ./wtdbg2_reads.kbmap &
 
+for jellyfish
+nohup jellyfish count -C -m 21 -s 1000000000 -t 10 m54274Ue_220811_201236.hifi_reads.fastq -o reads.jf &
+
 
