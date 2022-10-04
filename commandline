@@ -24,10 +24,19 @@ awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.r_utg.noseq.gfa > m542
 scp isabella@bast-work-1.zoologie.uni-koeln.de:/home/isabella/Data/m5427Ue_assembly.asm.bp.p_utg.noseq.fasta .
 # the dot signifies the direcroty you are in
 # pwd shows where you are right now.
-# to run a programme, must first download the tool into the Software folder (or whatever folder you will use it from) without using conda - command on github.
+# to run a programme, must first download the tool into the Software folder /NVME/Software/ (or whatever folder you will use it from) without using conda - command on github.
+git clone https://github.com/fenderglass/Flye
+cd Flye
+make
 # then need to specify it's path, not just to it's folder, but to it's absolute path.
 # in Motoko, the asbsolute path is leading to the tool itself which is in green.
-# made a directory for the Flye results to go into - not sure if it's necessary in isabella/Data: 
+# made a directory for the Flye results to go into - not sure if it's necessary in isabella/Data: from https://github.com/fenderglass/Flye/blob/flye/docs/INSTALL.md
 mkdir flye_assembly_diploscapter 
 nohup /NVME/Software/Flye/bin/flye -t 20 --pacbio-hifi m54274Ue_220811_201236.hifi_reads.fastq.gz --out-dir ./flye_assembly_diploscapter &
-# got the 
+# got the message: nohup: ignoring input and appending output to 'nohup.out' but that is fine, it's still occuring (according to the internet)
+## wtdbg2 download into /NVME/Software/ from https://github.com/ruanjue/wtdbg2
+git clone https://github.com/ruanjue/wtdbg2
+cd wtdbg2 && make
+nohup /NVME/Software/wtdbg2/wtdbg2 -t 20 -x ccs -i m54274Ue_220811_201236.hifi_reads.fastq.gz -o ./wtdbg2_reads.kbmap &
+
+
