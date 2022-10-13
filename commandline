@@ -40,6 +40,35 @@ cd wtdbg2 && make
 nohup /NVME/Software/wtdbg2/wtdbg2 -t 20 -x ccs -i m54274Ue_220811_201236.hifi_reads.fastq.gz -o ./wtdbg2_reads.kbmap &
 
 for jellyfish
+#jellyfish doesn't take .gz files therefore:
+gunzip -k m54274Ue_220811_201236.hifi_reads.fastq.gz
 nohup jellyfish count -C -m 21 -s 1000000000 -t 10 m54274Ue_220811_201236.hifi_reads.fastq -o reads.jf &
+## The -k option is to keep the fastq.gz file after unzipping, so you'll have both the fastq and the fastq.gz
 
+#on my own terminal:
+scp isabella@bast-work-1.zoologie.uni-koeln.de:/home/isabella/Data/reads.histo .
+then uploaded it to: http://qb.cshl.edu/genomescope/analysis.php?code=F73DNRdA6UF2SUZ6FVdr
+
+conda env list #shows us the list of environments/programs in the conda environment
+#we will use Kat, Busco and AssemblyStats to look at the results. 
+
+my wrong: kat comp -t 8 -o m54274Ue_220811_201236.hifi_reads.fastq ASSEMBLY
+correct: 
+# in Data folder:
+conda activate kat
+nohup kat comp -t 8 -o kat_m5427Ue m54274Ue_220811_201236.hifi_reads.fastq m5427Ue_assembly.asm.bp.p_ctg.fasta > kat_m5427Ue.log &
+conda activate busco
+nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -o Busco_m5427Ue_Hifi_Diplo --auto-lineage-euk &
+
+nohup /NVME/Software/wtdbg2/wtdbg2.pl -t 40 -x ccs -i m54274Ue_220811_201236.hifi_reads.fastq.gz -o ./wtdbg2_reads.kbmap &
+nohup /NVME/Software/wtdbg2/wtdbg2.pl -t 40 -x ccs -g 120m -o ./wtdbg2_reads.kbmap m54274Ue_220811_201236.hifi_reads.fastq.gz &
+
+Busco
+Tried: originally but nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -o Busco_m5427Ue_Hifi_Diplo --auto-lineage-euk &
+
+nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -c 8 -o Busco_m5427Ue_Hifi_Diplo -l --metazoa_odb10 &
+
+# with -i for the input, -o for the output folder, -m genome, -c for the number of threads
+
+nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -c 8 -o Busco_m5427Ue_Hifi_Diplo -l metazoa_odb10 &
 
