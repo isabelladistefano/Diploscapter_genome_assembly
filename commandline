@@ -71,4 +71,14 @@ nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -c 8 -o Busco_m5427
 # with -i for the input, -o for the output folder, -m genome, -c for the number of threads
 
 nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -c 8 -o Busco_m5427Ue_Hifi_Diplo -l metazoa_odb10 &
+nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -c 8 -o Busco_m5427Ue_Hifi_Diplo -l nematoda_odb10 &
+
+#Usage manual did not help me to find which file to use for Busco.
+
+nohup busco -i wtdbg2_reads.kbmap.cns.fa -m genome -c 8 -o Busco_wtdbg2_Diplo_metazoa -l metazoa_odb10 &
+nohup busco -i wtdbg2_reads.kbmap.cns.fa -m genome -c 8 -o Busco_wtdbg2_Diplo_nematoda -l nematoda_odb10 &
+
+#when you can see that the programme you are running isn't working, can type in:
+tail nohup.out
+#this will give the last 10 lines of the output and show the error, in this example it didn't want to override the directory "Busco_wtdbg2_Diplo_nematoda" therefore put "-f" to force it to override
 
