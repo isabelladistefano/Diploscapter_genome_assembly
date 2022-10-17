@@ -60,6 +60,8 @@ nohup kat comp -t 8 -o kat_m5427Ue m54274Ue_220811_201236.hifi_reads.fastq m5427
 conda activate busco
 nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -o Busco_m5427Ue_Hifi_Diplo --auto-lineage-euk &
 
+#trying again with wtdbg2
+
 nohup /NVME/Software/wtdbg2/wtdbg2.pl -t 40 -x ccs -i m54274Ue_220811_201236.hifi_reads.fastq.gz -o ./wtdbg2_reads.kbmap &
 nohup /NVME/Software/wtdbg2/wtdbg2.pl -t 40 -x ccs -g 120m -o ./wtdbg2_reads.kbmap m54274Ue_220811_201236.hifi_reads.fastq.gz &
 
@@ -78,7 +80,48 @@ nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -c 8 -o Busco_m5427
 nohup busco -i wtdbg2_reads.kbmap.cns.fa -m genome -c 8 -o Busco_wtdbg2_Diplo_metazoa -l metazoa_odb10 &
 nohup busco -i wtdbg2_reads.kbmap.cns.fa -m genome -c 8 -o Busco_wtdbg2_Diplo_nematoda -l nematoda_odb10 &
 
+#Busco for 2nd round of wtdbg2 assembly.
+
+nohup busco -i wtdbg2_reads_500mgenome.kbmap.cns.fa -m genome -c 8 -o Busco_wtdbg2_Diplo_metazoa -l metazoa_odb10 &
+nohup busco -i wtdbg2_reads_500mgenome.kbmap.cns.fa -m genome -c 8 -o Busco_wtdbg2_g500_Diplo_nematoda -l nematoda_odb10 &
+
 #when you can see that the programme you are running isn't working, can type in:
 tail nohup.out
 #this will give the last 10 lines of the output and show the error, in this example it didn't want to override the directory "Busco_wtdbg2_Diplo_nematoda" therefore put "-f" to force it to override
+
+nohup kat comp -t 8 -o kat_wtdgb_diplo wtdbg2_reads.kbmap.cns.fa wtdbg2_reads.kbmap.raw.fa &
+nohup kat comp -t 8 -o kat_hifi_diplo  m54274Ue_220811_201236.hifi_reads.fastq m5427Ue_assembly.asm.bp.p_ctg.fasta &
+nohup kat comp -t 8 -o kat_wtdgb_diplo_trial2 wtdbg2_reads.kbmap.raw.fa wtdbg2_reads.kbmap.cns.fa & - This didn't work because the READS are : m54274Ue_220811_201236.hifi_reads.fastq
+nohup kat comp -t 8 -o kat_wtdgb_diplo_trial2 wtdbg2_reads.kbmap.1.reads wtdbg2_reads.kbmap.cns.fa & 
+#^^didn't work
+#correct:
+nohup kat comp -t 8 -o kat_wtdgb_diplo_trial2 m54274Ue_220811_201236.hifi_reads.fastq wtdbg2_reads.kbmap.cns.fa & 
+
+#trying kat again with new assembly of wrdgb2 with 500m genome size
+
+nohup kat comp -t 8 -o diploscapter_wtdgb2_v2.5_g500m m54274Ue_220811_201236.hifi_reads.fastq wtdbg2_reads_500mgenome.kbmap.cns.fa & 
+
+to zoom in plot:
+kat plot spectra-cn -x 200 -o output.png kat_m5427Ue-main.mx
+kat plot spectra-cn -x 200 -o kat_wtdgb2_diplo_correct-main.png kat_wtdgb_diplo_trial2-main.mx 
+
+Smudgeplots - found in Software
+
+conda activate smudgeplot_env
+
+mkdir tmp
+ls /home/isabella/Data/m54274Ue_220811_201236.hifi_reads.fastq.gz > FILES
+# kmer 21, 16 threads, 64G of memory, counting kmer coverages between 1 and 10000x
+kmc -k21 -t16 -m64 -ci1 -cs10000 @FILES kmcdb tmp
+kmc_tools transform kmcdb histogram kmcdb_k21.hist -cx10000
+
+L=$(smudgeplot.py cutoff kmcdb_k21.hist L)
+U=$(smudgeplot.py cutoff kmcdb_k21.hist U)
+echo $L $U
+kmc_tools transform kmcdb -ci"$L" -cx"$U" dump -s kmcdb_L"$L"_U"$U".dump
+nohup smudgeplot.py hetkmers -o kmcdb_L"$L"_U"$U" < kmcdb_L"$L"_U"$U".dump &
+nohup smudgeplot.py plot kmcdb_L15_U1200_coverages.tsv &
+
+try wtdgb2 with larger genome size
+nohup /NVME/Software/wtdbg2/wtdbg2.pl -t 8 -x ccs -g 500m -o ./wtdbg2_reads_500mgenome.kbmap m54274Ue_220811_201236.hifi_reads.fastq.gz &
 
