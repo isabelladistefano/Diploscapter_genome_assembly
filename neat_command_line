@@ -1,0 +1,57 @@
+#Density plot of reads#
+
+#KAT GCP# - to make a matrix like a kmer spectra histogram
+nohup kat gcp m54274Ue_220811_201236.hifi_reads.fastq -o kat_gcp &
+#to change parameters
+kat plot density -x 100 -o kat-gcp-raw-x100.png kat-gcp.mx 
+
+#to open from own computer#
+scp isabella@bast-work-1.zoologie.uni-koeln.de:/home/isabella/Data/diploscapter_wtdgb2_v2.5_g500m-main.mx.spectra-cn.png  .
+
+#HIFIASM#
+#ASSEMBLY#
+nohup /NVME/Software/hifiasm/hifiasm -o m5427Ue_assembly.asm -t 20 -l 2 m54274Ue_220811_201236.hifi_reads.fastq.gz &
+
+#FOR VIEWING IN BANDAGE#
+awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.hap1.p_ctg.gfa > m5427Ue_assembly.asm.bp.hap1.p_ctg.fasta
+awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.hap2.p_ctg.gfa > m5427Ue_assembly.asm.bp.hap2.p_ctg.fasta
+awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.p_ctg.gfa > m5427Ue_assembly.asm.bp.p_ctg.fasta
+awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.p_utg.gfa > m5427Ue_assembly.asm.bp.p_utg.fasta
+awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.r_utg.gfa> m5427Ue_assembly.asm.bp.r_utg.fasta
+
+awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.hap1.p_ctg.noseq.gfa > m5427Ue_assembly.asm.bp.hap1.p_ctg.noseq.fasta
+awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.hap2.p_ctg.noseq.gfa > m5427Ue_assembly.asm.bp.hap2.p_ctg.noseq.fasta
+awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.p_ctg.noseq.gfa > m5427Ue_assembly.asm.bp.p_ctg.noseq.fasta
+awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.p_utg.noseq.gfa > m5427Ue_assembly.asm.bp.p_utg.noseq.fasta
+awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.r_utg.noseq.gfa > m5427Ue_assembly.asm.bp.r_utg.noseq.fasta
+
+#BUSCO#
+conda activate Busco
+nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -c 8 -o Busco_m5427Ue_Hifi_Diplo -l metazoa_odb10 &
+nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -c 8 -o Busco_m5427Ue_Hifi_Diplo -l nematoda_odb10 &
+
+#KAT#
+conda activate kat
+#KAT COMP - to make graph#
+nohup kat comp -t 8 -o kat_hifi_diplo  m54274Ue_220811_201236.hifi_reads.fastq m5427Ue_assembly.asm.bp.p_ctg.fasta &
+#To zoom in on x-axis#
+nohup kat plot spectra-cn -x 200 -o kat_hifi_diplo_x200.png kat_m5427Ue-main.mx &
+
+
+#wtdbg2
+
+#making wtdbg2
+git clone https://github.com/ruanjue/wtdbg2
+cd wtdbg2 && make
+
+#Assembly#
+nohup /NVME/Software/wtdbg2/wtdbg2.pl -t 8 -x ccs -g 500m -o ./wtdbg2_reads_500mgenome.kbmap m54274Ue_220811_201236.hifi_reads.fastq.gz &
+
+#Busco analysis#
+nohup busco -i wtdbg2_reads_500mgenome.kbmap.cns.fa -m genome -c 8 -o Busco_wtdbg2_Diplo_metazoa -l metazoa_odb10 &
+nohup busco -i wtdbg2_reads_500mgenome.kbmap.cns.fa -m genome -c 8 -o Busco_wtdbg2_g500_Diplo_nematoda -l nematoda_odb10 &
+
+#Kat Comp Histogram
+
+nohup kat comp -t 8 -o diploscapter_wtdgb2_v2.5_g500m m54274Ue_220811_201236.hifi_reads.fastq wtdbg2_reads_500mgenome.kbmap.cns.fa & 
+nohup kat plot spectra-cn -x 200 -o diploscapter_wtdgb2_v2.5_g500m-mainx200.mx.spectra-cn.png diploscapter_wtdgb2_v2.5_g500m-main.mx & 
