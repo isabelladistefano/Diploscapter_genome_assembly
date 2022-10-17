@@ -25,6 +25,9 @@ awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.p_ctg.noseq.gfa > m542
 awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.p_utg.noseq.gfa > m5427Ue_assembly.asm.bp.p_utg.noseq.fasta
 awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.r_utg.noseq.gfa > m5427Ue_assembly.asm.bp.r_utg.noseq.fasta
 
+#Assembly Statistics#
+assembly-stats m5427Ue_assembly.asm.bp.p_ctg.fasta
+
 #BUSCO#
 conda activate Busco
 nohup busco -i m5427Ue_assembly.asm.bp.p_ctg.fasta -m genome -c 8 -o Busco_m5427Ue_Hifi_Diplo -l metazoa_odb10 &
@@ -47,11 +50,13 @@ cd wtdbg2 && make
 #Assembly#
 nohup /NVME/Software/wtdbg2/wtdbg2.pl -t 8 -x ccs -g 500m -o ./wtdbg2_reads_500mgenome.kbmap m54274Ue_220811_201236.hifi_reads.fastq.gz &
 
+#Assembly-Statistics#
+assembly-stats wtdbg2_reads_500mgenome.kbmap.cns.fa
+
 #Busco analysis#
 nohup busco -i wtdbg2_reads_500mgenome.kbmap.cns.fa -m genome -c 8 -o Busco_wtdbg2_Diplo_metazoa -l metazoa_odb10 &
 nohup busco -i wtdbg2_reads_500mgenome.kbmap.cns.fa -m genome -c 8 -o Busco_wtdbg2_g500_Diplo_nematoda -l nematoda_odb10 &
 
-#Kat Comp Histogram
-
+#Kat Comp Histogram#
 nohup kat comp -t 8 -o diploscapter_wtdgb2_v2.5_g500m m54274Ue_220811_201236.hifi_reads.fastq wtdbg2_reads_500mgenome.kbmap.cns.fa & 
 nohup kat plot spectra-cn -x 200 -o diploscapter_wtdgb2_v2.5_g500m-mainx200.mx.spectra-cn.png diploscapter_wtdgb2_v2.5_g500m-main.mx & 
