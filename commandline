@@ -1,4 +1,5 @@
-#commandline for diploscapter genome assembly
+#commandline for diploscapter genome 
+
 #first copied the fasta file into home/isabella/Data
 #within home/isabella/Data
 #using hifiasm as the genome assembler
@@ -101,6 +102,7 @@ nohup kat comp -t 8 -o kat_wtdgb_diplo_trial2 m54274Ue_220811_201236.hifi_reads.
 
 nohup kat comp -t 8 -o diploscapter_wtdgb2_v2.5_g500m m54274Ue_220811_201236.hifi_reads.fastq wtdbg2_reads_500mgenome.kbmap.cns.fa & 
 
+
 to zoom in plot:
 kat plot spectra-cn -x 200 -o output.png kat_m5427Ue-main.mx
 kat plot spectra-cn -x 200 -o kat_wtdgb2_diplo_correct-main.png kat_wtdgb_diplo_trial2-main.mx 
@@ -108,20 +110,33 @@ kat plot spectra-cn -x 200 -o kat_wtdgb2_diplo_correct-main.png kat_wtdgb_diplo_
 Smudgeplots - found in Software
 
 conda activate smudgeplot_env
-
-mkdir tmp
-ls /home/isabella/Data/m54274Ue_220811_201236.hifi_reads.fastq.gz > FILES
 # kmer 21, 16 threads, 64G of memory, counting kmer coverages between 1 and 10000x
+ 
+mkdir tmp 
+ls m54274Ue_220811_201236.hifi_reads.fastq.gz > FILES
 kmc -k21 -t16 -m64 -ci1 -cs10000 @FILES kmcdb tmp
 kmc_tools transform kmcdb histogram kmcdb_k21.hist -cx10000
 
 L=$(smudgeplot.py cutoff kmcdb_k21.hist L)
 U=$(smudgeplot.py cutoff kmcdb_k21.hist U)
 echo $L $U
-kmc_tools transform kmcdb -ci"$L" -cx"$U" dump -s kmcdb_L"$L"_U"$U".dump
-nohup smudgeplot.py hetkmers -o kmcdb_L"$L"_U"$U" < kmcdb_L"$L"_U"$U".dump &
-nohup smudgeplot.py plot kmcdb_L15_U1200_coverages.tsv &
+kmc_tools transform kmcdb -ci15 -cx1200 dump -s kmcdb_L15_U1200.dump
+smudgeplot.py hetkmers -o kmcdb_L15_U1200 < kmcdb_L15_U1200.dump
+smudgeplot.py plot kmcdb_L15_U1200_coverages.tsv
+
+#or used the values that it echoed (15 and 1200)
+kmc_tools transform kmcdb -ci15 -cx1200 dump -s kmcdb_L15_U1200.dump
+smudgeplot.py hetkmers -o kmcdb_L15_U1200 < kmcdb_L15_U1200.dump
+smudgeplot.py plot kmcdb_L15_U1200_coverages.tsv
 
 try wtdgb2 with larger genome size
 nohup /NVME/Software/wtdbg2/wtdbg2.pl -t 8 -x ccs -g 500m -o ./wtdbg2_reads_500mgenome.kbmap m54274Ue_220811_201236.hifi_reads.fastq.gz &
+
+nohup kat plot spectra-cn -x 200 -o diploscapter_wtdgb2_v2.5_g500m-mainx200.mx.spectra-cn.png diploscapter_wtdgb2_v2.5_g500m-main.mx & 
+
+#KAT GCP for the initial reads.
+nohup kat gcp m54274Ue_220811_201236.hifi_reads.fastq -o kat_gcp_raw_reads &
+
+kat plot spectra-cx -x 200 -o kat-gcp-raw-x200.png kat-gcp.mx 
+kat plot density -x 100 -o kat-gcp-raw-x100.png kat-gcp.mx 
 
