@@ -8,6 +8,9 @@
 nohup /NVME/Software/hifiasm/hifiasm -o m5427Ue_assembly.asm -t 20 -l 2 m54274Ue_220811_201236.hifi_reads.fastq.gz &
 more nohup.out #shows us what is being produced in the output.
 
+#to get the hifiasm manual, go to the folder where it is 
+man ./hifiasm.1.
+
 awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.hap1.p_ctg.gfa > m5427Ue_assembly.asm.bp.hap1.p_ctg.fasta
 awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.hap2.p_ctg.gfa > m5427Ue_assembly.asm.bp.hap2.p_ctg.fasta
 awk '$1 ~/S/ {print ">"$2"\n"$3}' m5427Ue_assembly.asm.bp.p_ctg.gfa > m5427Ue_assembly.asm.bp.p_ctg.fasta
@@ -139,4 +142,10 @@ nohup kat gcp m54274Ue_220811_201236.hifi_reads.fastq -o kat_gcp_raw_reads &
 
 kat plot spectra-cx -x 200 -o kat-gcp-raw-x200.png kat-gcp.mx 
 kat plot density -x 100 -o kat-gcp-raw-x100.png kat-gcp.mx 
+
+#Kat Hist#
+nohup kat hist m54274Ue_220811_201236.hifi_reads.fastq &
+#gives output of hist.png
+nohup kat plot spectra-hist kat.hist &
+#Visualises the K-mer spectra from kat hist or jellyfish histo output. This tool is designed to plot line graphs of one or more histograms. The idea is to be able to compare total K-mer counts between different datasets.
 
